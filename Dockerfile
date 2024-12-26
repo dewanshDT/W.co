@@ -10,6 +10,9 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Create output directory with proper permissions
+RUN mkdir -p /app/output && chmod 777 /app/output
+
 # Copy the rest of the application
 COPY src/ ./src/
 COPY data/ ./data/

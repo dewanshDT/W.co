@@ -1,10 +1,12 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, send_file
 from data_loader import DataLoader
 from data_processor import DataProcessor
 from analysis import SalesAnalyzer
 from visualizations import Visualizer
 import json
 import os
+import pandas as pd
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -45,6 +47,29 @@ def run_analysis():
         'visualizations': visualizations
     }
 
+def generate_export_data(analysis_results):
+    """Generate data for export"""
+    # Create summary data
+    summary_data = {
+        'Metric': [
+            'Forecast Revenue 2025',
+            'Expected Growth',
+            'Current Revenue',
+            'Recommended Region',
+            'Recommended Channel',
+            'Recommended Drug',
+        ],
+        'Value': [
+            f"${analysis_results['forecast']['forecast_2025']:,.2f}",
+            f"{analysis_results['forecast']['expected_growth']:.1f}%",
+            f"${analysis_results['forecast']['current_revenue']:,.2f}",
+            analysis_results['recommendations']['recommended_regions'],
+            analysis_results['recommendations']['recommended_channels'],
+            analysis_results['recommendations']['recommended_drugs'],
+        ]
+    }
+    return pd.DataFrame(summary_data)
+
 @app.route('/')
 def index():
     analysis_results = run_analysis()
@@ -54,6 +79,38 @@ def index():
 def get_analysis():
     analysis_results = run_analysis()
     return jsonify(analysis_results)
+
+@app.route('/export/<format>')
+def export_report(format):
+    """Export report in specified format"""
+    # Create output directory if it doesn't exist
+    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output')
+    os.makedirs(output_dir, exist_ok=True)
+    
+    analysis_results = run_analysis()
+    df = generate_export_data(analysis_results)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    if format == 'excel':
+        output_path = os.path.join(output_dir, f'pharma_analysis_report_{timestamp}.xlsx')
+        df.to_excel(output_path, index=False, sheet_name='Analysis Summary')
+        return send_file(
+            output_path,
+            as_attachment=True,
+            download_name=f'pharma_analysis_report_{timestamp}.xlsx'
+        )
+    
+    elif format == 'csv':
+        output_path = os.path.join(output_dir, f'pharma_analysis_report_{timestamp}.csv')
+        df.to_csv(output_path, index=False)
+        return send_file(
+            output_path,
+            as_attachment=True,
+            download_name=f'pharma_analysis_report_{timestamp}.csv'
+        )
+    
+    return jsonify({'error': 'Invalid format'}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8501) 

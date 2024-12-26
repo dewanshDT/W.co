@@ -152,3 +152,120 @@ docker-compose down
 docker-compose down -v
 docker system prune
 ```
+
+## Analysis Methodology & Principles
+
+### 1. Data Processing Pipeline
+
+The analysis follows a structured pipeline approach:
+
+1. **Data Loading** (`data_loader.py`)
+
+   - Handles raw data ingestion
+   - Performs initial data cleaning
+   - Converts data types (dates, currency values)
+
+2. **Data Processing** (`data_processor.py`)
+
+   - Calculates key revenue metrics
+   - Groups data by different dimensions
+   - Analyzes Company W's specific performance
+
+3. **Advanced Analysis** (`analysis.py`)
+
+   - Revenue forecasting using linear regression
+   - Key factor identification
+   - Focus area recommendations
+
+4. **Visualization** (`visualizations.py`)
+   - Interactive trend analysis
+   - Performance comparisons
+   - Distribution analysis
+
+### 2. Key Analysis Components
+
+#### Revenue Forecasting
+
+- Uses historical data to predict 2025 revenue
+- Employs linear regression for trend analysis
+- Considers monthly revenue patterns
+- Calculates expected growth percentage
+
+#### Performance Analysis
+
+- Regional performance evaluation
+- Channel effectiveness analysis
+- Drug portfolio assessment
+- Sales representative allocation optimization
+
+#### Impact Analysis
+
+- Price elasticity evaluation
+- Regional impact assessment
+- Channel effectiveness measurement
+- Product performance metrics
+
+### 3. Design Principles
+
+1. **Modularity**
+
+   - Separate modules for different functionalities
+   - Easy to maintain and extend
+   - Clear separation of concerns
+
+2. **Data-Driven Decision Making**
+
+   - All recommendations based on statistical analysis
+   - Quantitative metrics for performance
+   - Evidence-based growth strategies
+
+3. **Scalability**
+
+   - Designed to handle growing data volumes
+   - Efficient data processing methods
+   - Optimized database operations
+
+4. **Visualization First**
+   - Interactive dashboards for better insights
+   - Clear visual representation of trends
+   - Easy-to-understand metrics presentation
+
+### 4. Export Functionality
+
+The system provides two export formats:
+
+1. **Excel Export**
+
+   - Comprehensive analysis summary
+   - Formatted worksheets
+   - Key metrics and recommendations
+
+2. **CSV Export**
+   - Raw data export
+   - Compatible with other analysis tools
+   - Easy to integrate with other systems
+
+### 5. Implementation Best Practices
+
+1. **Code Organization**
+
+   - Clear file structure
+   - Consistent naming conventions
+   - Well-documented functions
+
+2. **Error Handling**
+
+   - Robust data validation
+   - Clear error messages
+   - Graceful failure handling
+
+3. **Performance Optimization**
+
+   - Efficient data processing
+   - Optimized database queries
+   - Caching where appropriate
+
+4. **Security**
+   - Secure file handling
+   - Protected API endpoints
+   - Safe data export
