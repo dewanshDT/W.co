@@ -7,8 +7,25 @@ import json
 import os
 import pandas as pd
 from datetime import datetime
+import glob
 
 app = Flask(__name__)
+
+def cleanup_old_files(output_dir: str, pattern: str) -> None:
+    """Delete old export files matching the pattern"""
+    files = glob.glob(os.path.join(output_dir, pattern))
+    for file in files:
+        try:
+            os.remove(file)
+        except Exception as e:
+            app.logger.warning(f"Failed to delete {file}: {e}")
+
+def cleanup_after_send(file_path: str):
+    """Delete file after it's been sent"""
+    try:
+        os.remove(file_path)
+    except Exception as e:
+        app.logger.warning(f"Failed to delete {file_path}: {e}")
 
 def run_analysis():
     output_dir = 'output'
@@ -83,9 +100,11 @@ def get_analysis():
 @app.route('/export/<format>')
 def export_report(format):
     """Export report in specified format"""
-    # Create output directory if it doesn't exist
     output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'output')
     os.makedirs(output_dir, exist_ok=True)
+    
+    # Clean up old files before creating new ones
+    cleanup_old_files(output_dir, 'pharma_analysis_report_*.*')
     
     analysis_results = run_analysis()
     df = generate_export_data(analysis_results)
@@ -95,20 +114,28 @@ def export_report(format):
     if format == 'excel':
         output_path = os.path.join(output_dir, f'pharma_analysis_report_{timestamp}.xlsx')
         df.to_excel(output_path, index=False, sheet_name='Analysis Summary')
-        return send_file(
+        
+        # Return file and ensure cleanup after sending
+        response = send_file(
             output_path,
             as_attachment=True,
             download_name=f'pharma_analysis_report_{timestamp}.xlsx'
         )
+        response.call_on_close(lambda: cleanup_after_send(output_path))
+        return response
     
     elif format == 'csv':
         output_path = os.path.join(output_dir, f'pharma_analysis_report_{timestamp}.csv')
         df.to_csv(output_path, index=False)
-        return send_file(
+        
+        # Return file and ensure cleanup after sending
+        response = send_file(
             output_path,
             as_attachment=True,
             download_name=f'pharma_analysis_report_{timestamp}.csv'
         )
+        response.call_on_close(lambda: cleanup_after_send(output_path))
+        return response
     
     return jsonify({'error': 'Invalid format'}), 400
 

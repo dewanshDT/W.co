@@ -245,6 +245,15 @@ The system provides two export formats:
    - Compatible with other analysis tools
    - Easy to integrate with other systems
 
+#### File Management
+
+The export system includes automatic file cleanup:
+
+- Old export files are removed before new ones are created
+- Files are automatically deleted after download
+- No manual cleanup required
+- Prevents accumulation of temporary files
+
 ### 5. Implementation Best Practices
 
 1. **Code Organization**
