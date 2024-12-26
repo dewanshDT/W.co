@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Sales Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">Pharma Sales Analysis Dashboard</h1>
+
+        <!-- Forecast Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">2025 Revenue Forecast</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded">
+                    <p class="text-sm text-gray-600">Forecast Revenue</p>
+                    <p class="text-2xl font-bold">${{ "%.2f"|format(results.forecast.forecast_2025/1000000) }}M</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded">
+                    <p class="text-sm text-gray-600">Expected Growth</p>
+                    <p class="text-2xl font-bold">{{ "%.1f"|format(results.forecast.expected_growth) }}%</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded">
+                    <p class="text-sm text-gray-600">Current Revenue</p>
+                    <p class="text-2xl font-bold">${{ "%.2f"|format(results.forecast.current_revenue/1000000) }}M</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Focus Area Recommendations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border p-4 rounded">
+                    <p class="text-sm text-gray-600">Recommended Region</p>
+                    <p class="text-lg font-semibold">{{ results.recommendations.recommended_regions }}</p>
+                </div>
+                <div class="border p-4 rounded">
+                    <p class="text-sm text-gray-600">Recommended Channel</p>
+                    <p class="text-lg font-semibold">{{ results.recommendations.recommended_channels }}</p>
+                </div>
+                <div class="border p-4 rounded">
+                    <p class="text-sm text-gray-600">Recommended Drug</p>
+                    <p class="text-lg font-semibold">{{ results.recommendations.recommended_drugs }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualizations Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Revenue Trend</h2>
+                <div id="revenue_trend"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Revenue by Region</h2>
+                <div id="revenue_by_region"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Drug Performance</h2>
+                <div id="drug_performance"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4">Channel Performance</h2>
+                <div id="channel_performance"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // Parse JSON strings to objects
+        const visualizations = {
+            revenue_trend: JSON.parse('{{ results.visualizations.revenue_trend | safe }}'),
+            revenue_by_region: JSON.parse('{{ results.visualizations.revenue_by_region | safe }}'),
+            drug_performance: JSON.parse('{{ results.visualizations.drug_performance | safe }}'),
+            channel_performance: JSON.parse('{{ results.visualizations.channel_performance | safe }}')
+        };
+
+        // Create plots
+        Plotly.newPlot('revenue_trend', visualizations.revenue_trend.data, visualizations.revenue_trend.layout);
+        Plotly.newPlot('revenue_by_region', visualizations.revenue_by_region.data, visualizations.revenue_by_region.layout);
+        Plotly.newPlot('drug_performance', visualizations.drug_performance.data, visualizations.drug_performance.layout);
+        Plotly.newPlot('channel_performance', visualizations.channel_performance.data, visualizations.channel_performance.layout);
+    </script>
+</body>
+
+</html>
