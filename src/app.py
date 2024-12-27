@@ -43,6 +43,8 @@ def run_analysis():
     forecast = analyzer.forecast_revenue_2025()
     factors = analyzer.identify_key_factors()
     recommendations = analyzer.recommend_focus_areas()
+    competitor_analysis = analyzer.analyze_competitors()
+    competitive_advantages = analyzer.get_competitive_advantages()
     
     viz = Visualizer(data)
     trends = viz.create_revenue_trends()
@@ -61,6 +63,8 @@ def run_analysis():
         'forecast': forecast,
         'factors': factors,
         'recommendations': recommendations,
+        'competitor_analysis': competitor_analysis,
+        'competitive_advantages': competitive_advantages,
         'visualizations': visualizations
     }
 
